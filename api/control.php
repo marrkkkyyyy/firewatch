@@ -137,6 +137,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($value === 1) {
             $sensor = $db->query('SELECT temperature, humidity, gas_level, flame_detected FROM sensor_data ORDER BY recorded_at DESC LIMIT 1')->fetch_assoc();
+            if (!$sensor) {
+                $sensor = ['temperature' => 0, 'humidity' => 0, 'gas_level' => 0, 'flame_detected' => 0];
+            }
             $type = 'manual';
             $ins  = $db->prepare('INSERT INTO incidents (user_id, incident_type, temperature, humidity, gas_level, flame_detected) VALUES (?, ?, ?, ?, ?, ?)');
             $ins->bind_param('isddii', $userId, $type, $sensor['temperature'], $sensor['humidity'], $sensor['gas_level'], $sensor['flame_detected']);
